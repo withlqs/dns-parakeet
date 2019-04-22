@@ -28,14 +28,13 @@ def main():
     parser = argparse.ArgumentParser(
         description='forward each dns request to multiple servers to accelerate dns resolving')
     parser.add_argument(
-        'list',
+        'list_file',
         # required=True,
         type=argparse.FileType('r'),
         help='specify servers\' list'
     )
 
-    # server_list_file = open(parser.parse_args().list)
-    read_server_list = json.load(parser.parse_args().list)
+    read_server_list = json.load(parser.parse_args().list_file)
     for server in read_server_list:
         dns_server_list.append(server)
 
