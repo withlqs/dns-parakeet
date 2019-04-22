@@ -20,6 +20,8 @@ class UDPMessageHandler(socketserver.BaseRequestHandler):
 
         for dns_server in dns_server_list:
             sock.sendto(self.request[0], (dns_server, 53))
+        for dns_server in dns_server_list:
+            sock.sendto(self.request[0], (dns_server, 53))
 
         result = sock.recv(512)
         self.request[1].sendto(result, self.client_address)
@@ -27,5 +29,5 @@ class UDPMessageHandler(socketserver.BaseRequestHandler):
 
 
 if __name__ == "__main__":
-    server = socketserver.UDPServer(('127.0.0.1', 53), UDPMessageHandler)
+    server = socketserver.ThreadingUDPServer(('127.0.0.1', 53), UDPMessageHandler)
     server.serve_forever()
