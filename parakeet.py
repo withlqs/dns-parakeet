@@ -12,13 +12,22 @@ class UDPMessageHandler(socketserver.BaseRequestHandler):
 
     def handle(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.settimeout(0.05)
 
         for dns_server in dns_server_list:
             sock.sendto(self.request[0], (dns_server, 53))
         for dns_server in dns_server_list:
             sock.sendto(self.request[0], (dns_server, 53))
 
-        result = sock.recv(512)
+        while True:
+            try:
+                result = sock.recv(512)
+            except socket.timeout:
+                for dns_server in dns_server_list:
+                    sock.sendto(self.request[0], (dns_server, 53))
+                continue
+            break
+
         self.request[1].sendto(result, self.client_address)
         sock.close()
 
