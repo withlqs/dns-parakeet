@@ -1,16 +1,11 @@
 #!/usr/bin/env python3
 
+import argparse
+import json
 import socket
 import socketserver
 
-dns_server_list = [
-    '114.114.114.114',
-    '114.114.115.115',
-    '119.29.29.29',
-    '119.28.28.28',
-    '223.5.5.5',
-    '223.6.6.6',
-]
+dns_server_list = []
 
 
 class UDPMessageHandler(socketserver.BaseRequestHandler):
@@ -28,6 +23,25 @@ class UDPMessageHandler(socketserver.BaseRequestHandler):
         sock.close()
 
 
-if __name__ == "__main__":
+def main():
+    global dns_server_list
+    parser = argparse.ArgumentParser(
+        description='forward each dns request to multiple servers to accelerate dns resolving')
+    parser.add_argument(
+        'list',
+        # required=True,
+        type=argparse.FileType('r'),
+        help='specify servers\' list'
+    )
+
+    # server_list_file = open(parser.parse_args().list)
+    read_server_list = json.load(parser.parse_args().list)
+    for server in read_server_list:
+        dns_server_list.append(server)
+
     server = socketserver.ThreadingUDPServer(('127.0.0.1', 53), UDPMessageHandler)
     server.serve_forever()
+
+
+if __name__ == "__main__":
+    main()
