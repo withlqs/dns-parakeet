@@ -26,7 +26,7 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
         sock.settimeout(0.03)
 
         for dns_server in dns_server_list:
-            sock.sendto(DNSRequestHandler.rand_request(self.request[0]), (dns_server, 53))
+            sock.sendto(self.request[0], (dns_server, 53))
         for dns_server in dns_server_list:
             sock.sendto(DNSRequestHandler.rand_request(self.request[0]), (dns_server, 53))
 
