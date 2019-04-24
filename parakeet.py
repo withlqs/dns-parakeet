@@ -7,6 +7,7 @@ import socket
 import socketserver
 
 dns_server_list = []
+debug = False
 latency = 0.029
 max_message_length = 1024
 
@@ -23,7 +24,7 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
 
     def handle(self):
         trans_id = self.request[0][0:2]
-        # print(type(self.request[0]))
+        # if debug: print(type(self.request[0]))
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.settimeout(latency)
 
@@ -36,12 +37,14 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
             timeout = latency
             try:
                 result, address = sock.recvfrom(max_message_length)
-                print(address)
-                # print(result)
+                if debug:
+                    print(address)
+                # if debug: print(result)
             except socket.timeout:
                 for dns_server in dns_server_list:
                     sock.sendto(DNSRequestHandler.rand_request(self.request[0]), (dns_server, 53))
-                print('timeout+{}'.format(timeout))
+                if debug:
+                    print('timeout+{}'.format(timeout))
                 timeout += latency
                 continue
             break
@@ -52,6 +55,7 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
 
 def main():
     global dns_server_list
+    global debug
     parser = argparse.ArgumentParser(
         description='forward each dns request to multiple servers to accelerate dns resolving')
     parser.add_argument(
@@ -60,8 +64,15 @@ def main():
         type=argparse.FileType('r'),
         help='specify servers\' list'
     )
+    parser.add_argument(
+        '--debug',
+        action='store_true',
+        help='specify servers\' list'
+    )
+    args = parser.parse_args()
+    debug = args.debug
+    read_server_list = json.load(args.list_file)
 
-    read_server_list = json.load(parser.parse_args().list_file)
     for server in read_server_list:
         dns_server_list.append(server)
 
