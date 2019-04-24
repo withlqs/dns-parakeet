@@ -7,6 +7,8 @@ import socket
 import socketserver
 
 dns_server_list = []
+latency = 0.029
+max_message_length = 1024
 
 
 class DNSRequestHandler(socketserver.BaseRequestHandler):
@@ -23,7 +25,7 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
         trans_id = self.request[0][0:2]
         # print(type(self.request[0]))
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.settimeout(0.03)
+        sock.settimeout(latency)
 
         for dns_server in dns_server_list:
             sock.sendto(self.request[0], (dns_server, 53))
@@ -31,14 +33,16 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
             sock.sendto(DNSRequestHandler.rand_request(self.request[0]), (dns_server, 53))
 
         while True:
+            timeout = latency
             try:
-                result, address = sock.recvfrom(512)
+                result, address = sock.recvfrom(max_message_length)
                 print(address)
                 # print(result)
             except socket.timeout:
-                print('timeout')
                 for dns_server in dns_server_list:
                     sock.sendto(DNSRequestHandler.rand_request(self.request[0]), (dns_server, 53))
+                print('timeout+{}'.format(timeout))
+                timeout += latency
                 continue
             break
 
