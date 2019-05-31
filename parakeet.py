@@ -67,7 +67,7 @@ def main():
     parser.add_argument(
         '--debug',
         action='store_true',
-        help='specify servers\' list'
+        help='debug mode'
     )
     args = parser.parse_args()
     debug = args.debug
