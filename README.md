@@ -20,4 +20,8 @@ forward each dns request to multiple servers to accelerate dns resolving
 &nbsp;&nbsp;--debug     debug mode
 
 
-### probably need root privilege
+### Sample
+
+```sudo python3 parakeet.py china.json```
+
+probably need root privilege
