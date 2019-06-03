@@ -1,7 +1,23 @@
 # dns-parakeet
 
 forward each dns request to multiple servers to accelerate dns resolving
+ 
+ 
+### usage:
 
-usage: parakeet.py [-h] list_file
+&nbsp;&nbsp;parakeet.py [-h] [--debug] list_file
+ 
+ 
+### positional arguments:
 
-probably need root privilege
+&nbsp;&nbsp;list_file   specify servers' list
+ 
+ 
+### optional arguments:
+
+&nbsp;&nbsp;-h, --help  show this help message and exit
+
+&nbsp;&nbsp;--debug     debug mode
+
+
+### probably need root privilege
