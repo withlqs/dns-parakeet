@@ -22,6 +22,6 @@ forward each dns request to multiple servers to accelerate dns resolving
 
 ### Sample
 
-```sudo python3 parakeet.py china.json```
+```sudo python3 parakeet.py china.json``` and change system dns resolver to ```127.0.0.1```
 
 probably need root privilege
