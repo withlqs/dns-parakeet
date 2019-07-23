@@ -10,6 +10,7 @@ dns_server_list = []
 debug = False
 latency = 0.029
 max_message_length = 1024
+max_waiting_time = 10
 
 
 class DNSRequestHandler(socketserver.BaseRequestHandler):
@@ -46,6 +47,8 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
                 if debug:
                     print('timeout+{}'.format(timeout))
                 timeout += latency
+                if timeout > max_waiting_time:
+                    break
                 continue
             break
 
