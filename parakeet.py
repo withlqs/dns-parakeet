@@ -34,8 +34,8 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
         for dns_server in dns_server_list:
             sock.sendto(DNSRequestHandler.rand_request(self.request[0]), (dns_server, 53))
 
+        timeout = latency
         while True:
-            timeout = latency
             try:
                 result, address = sock.recvfrom(max_message_length)
                 if debug:
