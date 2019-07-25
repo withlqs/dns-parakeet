@@ -10,7 +10,7 @@ dns_server_list = []
 debug = False
 latency = 0.029
 max_message_length = 1024
-max_waiting_time = 10
+max_waiting_time = 2
 
 
 class DNSRequestHandler(socketserver.BaseRequestHandler):
