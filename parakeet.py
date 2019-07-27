@@ -25,34 +25,34 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
 
     def handle(self):
         trans_id = self.request[0][0:2]
-        # if debug: print(type(self.request[0]))
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.settimeout(latency)
 
         for dns_server in dns_server_list:
             sock.sendto(self.request[0], (dns_server, 53))
-        for dns_server in dns_server_list:
-            sock.sendto(DNSRequestHandler.rand_request(self.request[0]), (dns_server, 53))
+        # for dns_server in dns_server_list:
+        #     sock.sendto(DNSRequestHandler.rand_request(self.request[0]), (dns_server, 53))
 
         timeout = latency
         while True:
             try:
                 result, address = sock.recvfrom(max_message_length)
                 if debug:
-                    print(address)
-                # if debug: print(result)
-            except socket.timeout:
+                    print('result\t{}'.format(result))
+                    print('trans_id\t{}'.format(trans_id))
+                self.request[1].sendto(DNSRequestHandler.restore_request(result, trans_id), self.client_address)
+                break
+            except Exception as ex:
+                if debug:
+                    print(type(ex))
                 for dns_server in dns_server_list:
                     sock.sendto(DNSRequestHandler.rand_request(self.request[0]), (dns_server, 53))
-                if debug:
-                    print('timeout+{}'.format(timeout))
                 timeout += latency
                 if timeout > max_waiting_time:
+                    if debug:
+                        print('timeout and waited %.3f' % timeout)
                     break
-                continue
-            break
 
-        self.request[1].sendto(DNSRequestHandler.restore_request(result, trans_id), self.client_address)
         sock.close()
 
 
