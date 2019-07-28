@@ -28,18 +28,19 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.settimeout(latency)
 
+        #for dns_server in dns_server_list:
+        #    sock.sendto(self.request[0], (dns_server, 53))
         for dns_server in dns_server_list:
-            sock.sendto(self.request[0], (dns_server, 53))
-        # for dns_server in dns_server_list:
-        #     sock.sendto(DNSRequestHandler.rand_request(self.request[0]), (dns_server, 53))
+            sock.sendto(DNSRequestHandler.rand_request(self.request[0]), (dns_server, 53))
 
         timeout = latency
         while True:
             try:
                 result, address = sock.recvfrom(max_message_length)
                 if debug:
-                    print('result\t{}'.format(result))
+                    print('result\t{}'.format(result[0:2]))
                     print('trans_id\t{}'.format(trans_id))
+                    print(address)
                 self.request[1].sendto(DNSRequestHandler.restore_request(result, trans_id), self.client_address)
                 break
             except Exception as ex:
