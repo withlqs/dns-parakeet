@@ -10,11 +10,11 @@ import socketserver
 dns_server_list = []
 debug = False
 latency = 0.013
-recommanded_response_time = 0.016
-recommanded_response_duration = 16
+recommended_response_time = 0.016
+recommended_response_duration = 16
 max_message_length = 512
 max_waiting_time = 2
-first_send = 2
+first_send_count = 2
 
 
 class Colors:
@@ -46,13 +46,14 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
 
     @staticmethod
     def restore_request(request, trans_id):
-        return trans_id + request[2:]
+        return trans_id + bytes([request[2] & 0b11111101]) + request[3:]
+        # return trans_id + request[2:]
 
     def handle(self):
         trans_id = self.request[0][0:2]
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-        for i in range(first_send):
+        for i in range(first_send_count):
             for dns_server in dns_server_list:
                 sock.sendto(DNSRequestHandler.rand_request(self.request[0]), (dns_server, 53))
 
@@ -88,6 +89,9 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
                 if debug:
                     push_buf('length:\t{} bytes'.format(len(result)))
                     push_buf('server:\t{0}:{1}'.format(address[0], address[1]))
+                    # push_buf('request:\t{}'.format(str(type(result))).strip())
+                    # push_buf('request[2]:\t{}'.format(str(type(result[2]))).strip())
+                    # push_buf('len bytes:\t{}'.format(len(bytes([result[2] & 0b11111101]))))
                 self.request[1].sendto(DNSRequestHandler.restore_request(result, trans_id), self.client_address)
                 break
             except socket.timeout as ex:
@@ -105,9 +109,9 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
         if debug:
             duration = int(get_duration() * 1000)
             duration_color = Colors.OKGREEN
-            if duration > 2 * recommanded_response_duration:
+            if duration > 2 * recommended_response_duration:
                 duration_color = Colors.FAIL
-            elif duration > recommanded_response_duration:
+            elif duration > recommended_response_duration:
                 duration_color = Colors.OKBLUE
             push_buf('time:\t' + colored('{}ms'.format(duration), duration_color))
             print(merge_buf())
