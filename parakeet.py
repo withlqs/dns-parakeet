@@ -10,6 +10,8 @@ import socketserver
 dns_server_list = []
 debug = False
 latency = 0.013
+recommanded_response_time = 0.016
+recommanded_response_duration = 16
 max_message_length = 512
 max_waiting_time = 2
 first_send = 2
@@ -50,12 +52,11 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
         trans_id = self.request[0][0:2]
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-        if debug:
-            start = datetime.datetime.now()
         for i in range(first_send):
             for dns_server in dns_server_list:
                 sock.sendto(DNSRequestHandler.rand_request(self.request[0]), (dns_server, 53))
 
+        start = datetime.datetime.now()
         sock.settimeout(latency)
         buf = []
 
@@ -64,6 +65,9 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
 
         def merge_buf(buf_list=buf):
             return ''.join(buf_list)
+
+        def get_duration(start_date=start):
+            return (datetime.datetime.now() - start_date).total_seconds()
 
         if debug:
             domain = ''
@@ -78,7 +82,6 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
                 colored('domain:\t{}'.format(domain), Colors.WARNING)
             )
 
-        timeout = latency
         while True:
             try:
                 result, address = sock.recvfrom(max_message_length)
@@ -87,21 +90,27 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
                     push_buf('server:\t{0}:{1}'.format(address[0], address[1]))
                 self.request[1].sendto(DNSRequestHandler.restore_request(result, trans_id), self.client_address)
                 break
-            except Exception as ex:
+            except socket.timeout as ex:
+                if debug:
+                    push_buf(colored('Catch:\tsocket.timeout', Colors.FAIL))
                 for dns_server in dns_server_list:
                     sock.sendto(DNSRequestHandler.rand_request(self.request[0]), (dns_server, 53))
-                timeout += latency
-                if timeout > max_waiting_time:
+                if get_duration() > max_waiting_time:
                     if debug:
                         push_buf(colored('Warning:\ttimeout', Colors.FAIL))
                     break
 
-        if debug:
-            end = datetime.datetime.now()
-            duration = int((end - start).total_seconds() * 1000)
-            push_buf('time:\t' + colored('{}ms'.format(duration), Colors.UNDERLINE))
-            print(merge_buf())
         sock.close()
+
+        if debug:
+            duration = int(get_duration() * 1000)
+            duration_color = Colors.OKGREEN
+            if duration > 2 * recommanded_response_duration:
+                duration_color = Colors.FAIL
+            elif duration > recommanded_response_duration:
+                duration_color = Colors.OKBLUE
+            push_buf('time:\t' + colored('{}ms'.format(duration), duration_color))
+            print(merge_buf())
 
 
 def main():
