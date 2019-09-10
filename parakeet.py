@@ -86,13 +86,10 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
         while True:
             try:
                 result, address = sock.recvfrom(max_message_length)
+                self.request[1].sendto(DNSRequestHandler.restore_request(result, trans_id), self.client_address)
                 if debug:
                     push_buf('length:\t{} bytes'.format(len(result)))
                     push_buf('server:\t{0}:{1}'.format(address[0], address[1]))
-                    # push_buf('request:\t{}'.format(str(type(result))).strip())
-                    # push_buf('request[2]:\t{}'.format(str(type(result[2]))).strip())
-                    # push_buf('len bytes:\t{}'.format(len(bytes([result[2] & 0b11111101]))))
-                self.request[1].sendto(DNSRequestHandler.restore_request(result, trans_id), self.client_address)
                 break
             except socket.timeout as ex:
                 if debug:
