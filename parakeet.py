@@ -50,15 +50,7 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
         # return trans_id + request[2:]
 
     def handle(self):
-        trans_id = self.request[0][0:2]
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
-        for i in range(first_send_count):
-            for dns_server in dns_server_list:
-                sock.sendto(DNSRequestHandler.rand_request(self.request[0]), (dns_server, 53))
-
         start = datetime.datetime.now()
-        sock.settimeout(latency)
         buf = []
 
         def push_buf(content, buf_list=buf):
@@ -69,6 +61,9 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
 
         def get_duration(start_date=start):
             return (datetime.datetime.now() - start_date).total_seconds()
+
+        trans_id = self.request[0][0:2]
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
         if debug:
             domain = ''
@@ -83,6 +78,16 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
                 colored('domain:\t{}'.format(domain), Colors.WARNING)
             )
 
+        for i in range(first_send_count):
+            for dns_server in dns_server_list:
+                try:
+                    sock.sendto(DNSRequestHandler.rand_request(self.request[0]), (dns_server, 53))
+                except Exception as ex:
+                    if debug:
+                        push_buf(colored('Catch:\tException', Colors.FAIL))
+
+        sock.settimeout(latency)
+
         while True:
             try:
                 result, address = sock.recvfrom(max_message_length)
@@ -91,11 +96,15 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
                     push_buf('length:\t{} bytes'.format(len(result)))
                     push_buf('server:\t{0}:{1}'.format(address[0], address[1]))
                 break
-            except socket.timeout as ex:
+            except Exception as ex:
                 if debug:
-                    push_buf(colored('Catch:\tsocket.timeout', Colors.FAIL))
+                    push_buf(colored('Catch:\tException', Colors.FAIL))
                 for dns_server in dns_server_list:
-                    sock.sendto(DNSRequestHandler.rand_request(self.request[0]), (dns_server, 53))
+                    try:
+                        sock.sendto(DNSRequestHandler.rand_request(self.request[0]), (dns_server, 53))
+                    except Exception as ex2:
+                        if debug:
+                            push_buf(colored('Catch:\tException', Colors.FAIL))
                 if get_duration() > max_waiting_time:
                     if debug:
                         push_buf(colored('Warning:\ttimeout', Colors.FAIL))
