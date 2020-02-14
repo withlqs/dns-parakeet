@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="999caea8-bda6-4786-a443-aca080f63b0c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/parakeet.py" beforeDir="false" afterPath="$PROJECT_DIR$/parakeet.py" afterDir="false" />
     </list>
@@ -67,7 +66,9 @@
       <workItem from="1567735204342" duration="5952000" />
       <workItem from="1567995196373" duration="1507000" />
       <workItem from="1568025176848" duration="5152000" />
-      <workItem from="1580704000944" duration="1007000" />
+      <workItem from="1580704000944" duration="1183000" />
+      <workItem from="1581655610378" duration="69000" />
+      <workItem from="1581655851483" duration="6992000" />
     </task>
     <task id="LOCAL-00001" summary="change dns list">
       <created>1560846357811</created>
@@ -111,7 +112,14 @@
       <option name="project" value="LOCAL" />
       <updated>1568033601747</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="fix other exception">
+      <created>1580705292762</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1580705292762</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -137,12 +145,25 @@
     <MESSAGE value="fix bugs" />
     <MESSAGE value="TODO: TCP Request" />
     <MESSAGE value="prevent dns truncation" />
-    <option name="LAST_COMMIT_MESSAGE" value="prevent dns truncation" />
+    <MESSAGE value="fix other exception" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix other exception" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="423" y="125" key="CommitChangelistDialog2" timestamp="1580705292622">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state x="423" y="125" key="CommitChangelistDialog2/0.0.1680.1050@0.0.1680.1050" timestamp="1580705292622" />
+    <state x="440" y="265" key="Vcs.Push.Dialog.v2" timestamp="1580705294366">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state x="440" y="265" key="Vcs.Push.Dialog.v2/0.0.1680.1050@0.0.1680.1050" timestamp="1580705294366" />
+    <state x="517" y="357" key="com.intellij.ide.util.TipDialog" timestamp="1581655852052">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state x="517" y="357" key="com.intellij.ide.util.TipDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1581655852052" />
     <state x="623" y="449" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1580704051147">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>

@@ -11,7 +11,7 @@ dns_server_list = []
 debug = False
 latency = 0.013
 recommended_response_time = 0.016
-recommended_response_duration = 16
+recommended_response_duration = 0.016
 max_message_length = 512
 max_waiting_time = 2
 first_send_count = 2
@@ -52,6 +52,7 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
     def handle(self):
         start = datetime.datetime.now()
         buf = []
+        timeout_times = 0
 
         def push_buf(content, buf_list=buf):
             buf_list.append(str(content) + '\n')
@@ -62,8 +63,35 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
         def get_duration(start_date=start):
             return (datetime.datetime.now() - start_date).total_seconds()
 
+        def final_print():
+            duration = get_duration()
+            duration_color = Colors.OKGREEN
+            if duration > 2 * recommended_response_duration:
+                duration_color = Colors.FAIL
+            elif duration > recommended_response_duration:
+                duration_color = Colors.OKBLUE
+            push_buf(
+                'time:\t' + colored('{}ms'.format(int(duration * 1000)), duration_color) + ', {}'.format(timeout_times))
+            print(merge_buf())
+
+        def one_send():
+            for dns_server in dns_server_list:
+                try:
+                    sock.sendto(DNSRequestHandler.rand_request(self.request[0]), (dns_server, 53))
+                except Exception as ex_one_send:
+                    if isinstance(ex_one_send, socket.timeout):
+                        if debug:
+                            push_buf(colored('catch:\t{}'.format(type(ex_one_send)), Colors.FAIL))
+                    else:
+                        sock.close()
+                        if debug:
+                            push_buf(colored('catch:\t{}'.format(type(ex_one_send)), Colors.FAIL))
+                            final_print()
+                        return
+
         trans_id = self.request[0][0:2]
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.settimeout(latency)
 
         if debug:
             domain = ''
@@ -77,16 +105,13 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
             push_buf(
                 colored('domain:\t{}'.format(domain), Colors.WARNING)
             )
+            push_buf('<sending>')
 
         for i in range(first_send_count):
-            for dns_server in dns_server_list:
-                try:
-                    sock.sendto(DNSRequestHandler.rand_request(self.request[0]), (dns_server, 53))
-                except Exception as ex:
-                    if debug:
-                        push_buf(colored('Catch:\tException', Colors.FAIL))
+            one_send()
 
-        sock.settimeout(latency)
+        if debug:
+            push_buf('<receiving>')
 
         while True:
             try:
@@ -97,30 +122,28 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
                     push_buf('server:\t{0}:{1}'.format(address[0], address[1]))
                 break
             except Exception as ex:
-                if debug:
-                    push_buf(colored('Catch:\tException', Colors.FAIL))
-                for dns_server in dns_server_list:
-                    try:
-                        sock.sendto(DNSRequestHandler.rand_request(self.request[0]), (dns_server, 53))
-                    except Exception as ex2:
-                        if debug:
-                            push_buf(colored('Catch:\tException', Colors.FAIL))
-                if get_duration() > max_waiting_time:
+                if isinstance(ex, socket.timeout):
+                    one_send()
                     if debug:
-                        push_buf(colored('Warning:\ttimeout', Colors.FAIL))
-                    break
+                        timeout_times += 1
+                        if timeout_times == 1:
+                            push_buf(colored('catch:\t{}'.format(type(ex)), Colors.FAIL))
+                else:
+                    sock.close()
+                    if debug:
+                        push_buf(colored('catch:\t{}'.format(type(ex)), Colors.FAIL))
+                        final_print()
+                    return
+
+            if get_duration() > max_waiting_time:
+                if debug:
+                    push_buf(colored('Warning:\ttimeout', Colors.FAIL))
+                break
 
         sock.close()
 
         if debug:
-            duration = int(get_duration() * 1000)
-            duration_color = Colors.OKGREEN
-            if duration > 2 * recommended_response_duration:
-                duration_color = Colors.FAIL
-            elif duration > recommended_response_duration:
-                duration_color = Colors.OKBLUE
-            push_buf('time:\t' + colored('{}ms'.format(duration), duration_color))
-            print(merge_buf())
+            final_print()
 
 
 def main():
