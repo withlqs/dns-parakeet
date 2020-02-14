@@ -68,7 +68,11 @@
       <workItem from="1568025176848" duration="5152000" />
       <workItem from="1580704000944" duration="1183000" />
       <workItem from="1581655610378" duration="69000" />
-      <workItem from="1581655851483" duration="6992000" />
+      <workItem from="1581655851483" duration="7036000" />
+      <workItem from="1581670869529" duration="1761000" />
+      <workItem from="1581672973966" duration="41000" />
+      <workItem from="1581673162470" duration="764000" />
+      <workItem from="1581674130660" duration="2000" />
     </task>
     <task id="LOCAL-00001" summary="change dns list">
       <created>1560846357811</created>
@@ -119,7 +123,14 @@
       <option name="project" value="LOCAL" />
       <updated>1580705292762</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="fix bugs">
+      <created>1581670463042</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1581670463042</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -142,28 +153,28 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
     <MESSAGE value="change dns list" />
-    <MESSAGE value="fix bugs" />
     <MESSAGE value="TODO: TCP Request" />
     <MESSAGE value="prevent dns truncation" />
     <MESSAGE value="fix other exception" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix other exception" />
+    <MESSAGE value="fix bugs" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix bugs" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="423" y="125" key="CommitChangelistDialog2" timestamp="1580705292622">
+    <state x="423" y="125" key="CommitChangelistDialog2" timestamp="1581670462885">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state x="423" y="125" key="CommitChangelistDialog2/0.0.1680.1050@0.0.1680.1050" timestamp="1580705292622" />
-    <state x="440" y="265" key="Vcs.Push.Dialog.v2" timestamp="1580705294366">
+    <state x="423" y="125" key="CommitChangelistDialog2/0.0.1680.1050@0.0.1680.1050" timestamp="1581670462885" />
+    <state x="440" y="265" key="Vcs.Push.Dialog.v2" timestamp="1581670464956">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state x="440" y="265" key="Vcs.Push.Dialog.v2/0.0.1680.1050@0.0.1680.1050" timestamp="1580705294366" />
-    <state x="517" y="357" key="com.intellij.ide.util.TipDialog" timestamp="1581655852052">
+    <state x="440" y="265" key="Vcs.Push.Dialog.v2/0.0.1680.1050@0.0.1680.1050" timestamp="1581670464956" />
+    <state x="517" y="330" key="com.intellij.ide.util.TipDialog" timestamp="1581684907379">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state x="517" y="357" key="com.intellij.ide.util.TipDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1581655852052" />
+    <state x="517" y="330" key="com.intellij.ide.util.TipDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1581684907379" />
     <state x="623" y="449" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1580704051147">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>

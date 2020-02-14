@@ -4,13 +4,12 @@ import argparse
 import datetime
 import json
 import os
-import socket
 import socketserver
+import sys
 
 dns_server_list = []
 debug = False
 latency = 0.013
-recommended_response_time = 0.016
 recommended_response_duration = 0.016
 max_message_length = 512
 max_waiting_time = 2
@@ -50,9 +49,13 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
         # return trans_id + request[2:]
 
     def handle(self):
+        import socket
         start = datetime.datetime.now()
         buf = []
         timeout_times = 0
+        trans_id = self.request[0][0:2]
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.settimeout(latency)
 
         def push_buf(content, buf_list=buf):
             buf_list.append(str(content) + '\n')
@@ -87,11 +90,10 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
                         if debug:
                             push_buf(colored('catch:\t{}'.format(type(ex_one_send)), Colors.FAIL))
                             final_print()
-                        return
+                        os.execl(sys.executable, 'python', __file__, *sys.argv[1:])
+                        return -1
 
-        trans_id = self.request[0][0:2]
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.settimeout(latency)
+            return 0
 
         if debug:
             domain = ''
@@ -108,7 +110,8 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
             push_buf('<sending>')
 
         for i in range(first_send_count):
-            one_send()
+            if one_send() != 0:
+                return
 
         if debug:
             push_buf('<receiving>')
@@ -123,7 +126,8 @@ class DNSRequestHandler(socketserver.BaseRequestHandler):
                 break
             except Exception as ex:
                 if isinstance(ex, socket.timeout):
-                    one_send()
+                    if one_send() != 0:
+                        return
                     if debug:
                         timeout_times += 1
                         if timeout_times == 1:
