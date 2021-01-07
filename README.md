@@ -5,12 +5,12 @@ accelerate dns resolving by forwarding each dns request to multiple servers
  
 ### usage:
 
-&nbsp;&nbsp;parakeet.py [-h] [--debug] list_file
+&nbsp;&nbsp;parakeet.py [-h] [--debug] dns_servers_list_file
  
  
 ### positional arguments:
 
-&nbsp;&nbsp;list_file   specify servers' list
+&nbsp;&nbsp;dns_servers_list_file   specify servers' list
  
  
 ### optional arguments:
